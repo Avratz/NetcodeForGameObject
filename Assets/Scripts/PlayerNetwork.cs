@@ -7,6 +7,8 @@ using UnityEngine;
 public class PlayerNetwork : NetworkBehaviour
 {
 
+  [SerializeField] private Transform spawnedObjectPrefab;
+  private Transform spawnedObjectTransform;
 
   private NetworkVariable<MyCustomData> randomNumber = new NetworkVariable<MyCustomData>(
     new MyCustomData
@@ -48,6 +50,10 @@ public class PlayerNetwork : NetworkBehaviour
 
     if (Input.GetKeyDown(KeyCode.Space))
     {
+      spawnedObjectTransform = Instantiate(spawnedObjectPrefab);
+      spawnedObjectTransform.GetComponent<NetworkObject>().Spawn(true);
+
+
       TestServerRpc(new ServerRpcParams());
       TestClientRpc(new ClientRpcParams
       {
@@ -62,6 +68,15 @@ public class PlayerNetwork : NetworkBehaviour
         _bool = Random.Range(0, 2) == 0,
         message = "Hello World 2"
       };
+    }
+
+    if (Input.GetKeyDown(KeyCode.Y))
+    {
+      if (spawnedObjectTransform != null)
+      {
+        Destroy(spawnedObjectTransform.gameObject);
+        spawnedObjectTransform.GetComponent<NetworkObject>().Despawn(true);
+      }
     }
 
 
